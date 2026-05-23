@@ -7,6 +7,11 @@ license: MIT
 metadata:
   tags: [citations, bibliography, doi, pmid, arxiv, csl, bibtex, ris, retraction, open-access, citation-verification, research]
   related_skills: [scholar-sidekick-mcp, arxiv]
+  openclaw:
+    emoji: "📚"
+    homepage: "https://scholar-sidekick.com"
+    requires:
+      bins: [curl]
 ---
 
 # Scholar Sidekick (REST API) — Citations, Retraction & Open-Access

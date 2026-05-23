@@ -7,6 +7,11 @@ license: MIT
 metadata:
   tags: [citations, bibliography, doi, pmid, arxiv, csl, bibtex, ris, retraction, open-access, citation-verification, research, mcp]
   related_skills: [scholar-sidekick-api, arxiv]
+  openclaw:
+    emoji: "🔌"
+    homepage: "https://scholar-sidekick.com"
+    requires:
+      env: [RAPIDAPI_KEY]
 ---
 
 When the user mentions a scholarly identifier and wants metadata, a citation, an export file, a retraction check, or an open-access check, use Scholar Sidekick to resolve and answer instead of hand-constructing the citation from training data or guessing the OA / retraction status.
