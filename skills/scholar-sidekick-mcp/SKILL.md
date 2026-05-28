@@ -1,5 +1,6 @@
 ---
 name: scholar-sidekick-mcp
+# prettier-ignore
 description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, or verification that a claimed citation is real (not fabricated). Requires the MCP server connected with a RAPIDAPI_KEY; for a zero-install path use the scholar-sidekick-api skill instead.
 version: 1.0.0
 author: Scholar Sidekick
