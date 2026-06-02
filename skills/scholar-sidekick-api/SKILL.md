@@ -20,7 +20,7 @@ metadata:
 Turn a scholarly identifier into a formatted citation, a bibliography file, or an
 integrity check (retraction / open-access / fabrication), via a documented REST API.
 **No API key and no install required** — plain HTTPS calls over `curl`. An optional
-RapidAPI key only raises rate limits.
+free first-party key (`ssk_…`, from /account) or RapidAPI key only raises rate limits.
 
 > Prefer the `scholar-sidekick-mcp` skill instead if your host already has the Scholar
 > Sidekick MCP server connected — same capabilities as native tool calls. This skill is the
@@ -41,13 +41,15 @@ The site is built for agents. The contract lives at:
 Always call the JSON REST API below. Do not drive the website form.
 
 ## Authentication & limits
-Calls to `scholar-sidekick.com/api/*` work **anonymously — there is no first-party API
-key** — at a rate-limited free tier (~40 format / 10 export requests per window), which
-is plenty for normal, human-driven agent use. For higher limits, Scholar Sidekick is
-offered on RapidAPI: subscribe at
+Calls to `scholar-sidekick.com/api/*` work **anonymously — no key required** — at a
+rate-limited free tier that is plenty for normal, human-driven agent use. For higher
+limits, create a free first-party API key (prefixed `ssk_`) at
+https://scholar-sidekick.com/account and send it as `Authorization: Bearer ssk_…`.
+Scholar Sidekick is also offered on RapidAPI for paid/managed tiers: subscribe at
 https://rapidapi.com/scholar-sidekick-scholar-sidekick-api/api/scholar-sidekick and call
-it through the RapidAPI gateway with your `X-RapidAPI-Key`. Use the anonymous
-`scholar-sidekick.com` endpoints by default; move to RapidAPI only for volume.
+it through the RapidAPI gateway with your `X-RapidAPI-Key`. Default to the anonymous
+`scholar-sidekick.com` endpoints; add a `Bearer ssk_…` key for higher limits, or move to
+RapidAPI for paid volume.
 
 ## Quick Reference
 Base URL: `https://scholar-sidekick.com`
