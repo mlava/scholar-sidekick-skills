@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Daily drift monitor: do the `/api/*` endpoints the SKILL.md files teach
+    # still exist in the website's published OpenAPI spec? See
+    # scripts/check-endpoint-contract.mjs.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  endpoint-contract:
+    name: Endpoint contract (skills ⇄ published OpenAPI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Zero dependencies — uses Node's built-in fetch + fs. Reads the live
+      # published spec, so it doubles as the offline (always-on) and live check.
+      - run: node scripts/check-endpoint-contract.mjs
