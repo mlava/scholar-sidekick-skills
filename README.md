@@ -29,9 +29,22 @@ These skills follow the open `SKILL.md` convention, so they install in any compa
 # list what's in the repo
 npx -y skills@latest add mlava/scholar-sidekick-skills --list
 
-# add a specific skill
+# add everything in the repo (both skills)
 npx -y skills@latest add mlava/scholar-sidekick-skills
 ```
+
+Or install one skill by its explicit `skills/<name>` path:
+
+```bash
+# zero-install REST skill (start here)
+npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-api
+
+# MCP skill (host has the scholar-sidekick-mcp server connected)
+npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-mcp
+```
+
+> Browse the rendered docs: [scholar-sidekick-api](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-api)
+> · [scholar-sidekick-mcp](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-mcp) on skills.sh.
 
 ## Quick taste (no install)
 
@@ -48,6 +61,7 @@ curl -sS -X POST "https://scholar-sidekick.com/api/format" \
 - **Agent Skills discovery index:** https://scholar-sidekick.com/.well-known/agent-skills/index.json
 - **MCP server:** https://github.com/mlava/scholar-sidekick-mcp · `npx -y scholar-sidekick-mcp@latest`
 - **Data sources & determinism:** https://scholar-sidekick.com/.well-known/sources.json
+- **Browse on skills.sh:** https://www.skills.sh/mlava/scholar-sidekick-skills
 
 ## Not a paper-search tool
 
