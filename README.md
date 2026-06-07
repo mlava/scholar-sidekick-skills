@@ -16,9 +16,10 @@ misses.
 | Skill | Path | Use when |
 |-------|------|----------|
 | **`scholar-sidekick-api`** | [`skills/scholar-sidekick-api`](skills/scholar-sidekick-api/SKILL.md) | **Zero-install.** The agent can run `curl`/HTTP. No API key, no setup — calls the public REST API directly. Start here. |
+| **`scholar-sidekick-cli`** | [`skills/scholar-sidekick-cli`](skills/scholar-sidekick-cli/SKILL.md) | The agent has **Node ≥20** and prefers typed subcommands (`scholar format …`), batch input, streaming, and `> file` redirection over hand-built `curl` payloads. Ships on npm as [`scholar-sidekick-cli`](https://www.npmjs.com/package/scholar-sidekick-cli). |
 | **`scholar-sidekick-mcp`** | [`skills/scholar-sidekick-mcp`](skills/scholar-sidekick-mcp/SKILL.md) | The host has the [`scholar-sidekick-mcp`](https://github.com/mlava/scholar-sidekick-mcp) MCP server connected (works anonymously — no key required; optional `SCHOLAR_API_KEY`/`RAPIDAPI_KEY` raise limits). Native tool calls instead of `curl`. |
 
-Both expose the same capabilities; pick the one that matches how your agent is wired.
+All three expose the same capabilities; pick the one that matches how your agent is wired.
 
 ## Install
 
@@ -29,7 +30,7 @@ These skills follow the open `SKILL.md` convention, so they install in any compa
 # list what's in the repo
 npx -y skills@latest add mlava/scholar-sidekick-skills --list
 
-# add everything in the repo (both skills)
+# add everything in the repo (all three skills)
 npx -y skills@latest add mlava/scholar-sidekick-skills
 ```
 
@@ -39,11 +40,15 @@ Or install one skill by its explicit `skills/<name>` path:
 # zero-install REST skill (start here)
 npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-api
 
+# CLI skill (agent has Node ≥20; uses the `scholar` command)
+npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-cli
+
 # MCP skill (host has the scholar-sidekick-mcp server connected)
 npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-mcp
 ```
 
 > Browse the rendered docs: [scholar-sidekick-api](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-api)
+> · [scholar-sidekick-cli](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-cli)
 > · [scholar-sidekick-mcp](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-mcp) on skills.sh.
 
 ## Quick taste (no install)

@@ -43,5 +43,8 @@ jobs:
       - name: Refresh scholar-sidekick-api
         run: npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-api --yes
 
+      - name: Refresh scholar-sidekick-cli
+        run: npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-cli --yes
+
       - name: Refresh scholar-sidekick-mcp
         run: npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-mcp --yes
