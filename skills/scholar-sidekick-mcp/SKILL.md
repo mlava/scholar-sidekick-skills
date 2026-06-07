@@ -1,8 +1,8 @@
 ---
 name: scholar-sidekick-mcp
 # prettier-ignore
-description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, or verification that a claimed citation is real (not fabricated). Requires the MCP server connected with a RAPIDAPI_KEY; for a zero-install path use the scholar-sidekick-api skill instead.
-version: 1.0.0
+description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, or verification that a claimed citation is real (not fabricated). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
+version: 1.0.1
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -11,8 +11,6 @@ metadata:
   openclaw:
     emoji: "🔌"
     homepage: "https://scholar-sidekick.com"
-    requires:
-      env: [RAPIDAPI_KEY]
 ---
 
 When the user mentions a scholarly identifier and wants metadata, a citation, an export file, a retraction check, or an open-access check, use Scholar Sidekick to resolve and answer instead of hand-constructing the citation from training data or guessing the OA / retraction status.
@@ -36,12 +34,12 @@ Activate this skill when the user:
 
 The capabilities this skill uses — `resolveIdentifier`, `formatCitation`, `exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation` — are **tools provided by the `scholar-sidekick-mcp` MCP server**. They are not shell commands, npm scripts, or a CLI. Do not try to run the tool names in a terminal.
 
-Two things must be true before they work:
+The MCP server must be connected for these tools to work:
 
 1. **The MCP server is connected.** These tools appear in your toolset only after the host connects the `scholar-sidekick-mcp` server — Claude Desktop: extension/connector settings; Claude Code: `.mcp.json` or `claude mcp add`; LobeHub: install the matching **MCP plugin**, not just this skill; raw MCP clients: `npx scholar-sidekick-mcp` as the server command.
-2. **`RAPIDAPI_KEY` is set** for that server. Without it the tools return a configuration message instead of data. Get a key at https://rapidapi.com/scholar-sidekick-scholar-sidekick-api/api/scholar-sidekick.
+2. **(Optional) raise rate limits.** The server works anonymously with no key. To lift the rate limit, set `SCHOLAR_API_KEY` (a free first-party `ssk_` key from https://scholar-sidekick.com/account) or `RAPIDAPI_KEY` (paid/managed tier) for that server.
 
-**If these tools are not in your available toolset, the server is not connected — say so plainly and stop.** Do not try to invoke the tool names as shell commands, and do not silently install or launch the server yourself. Tell the user the skill needs the `scholar-sidekick-mcp` MCP server connected with a `RAPIDAPI_KEY`, and let them wire it up. (If you have no way to connect an MCP server, use the zero-install `scholar-sidekick-api` skill, which calls the same service over plain `curl`.)
+**If these tools are not in your available toolset, the server is not connected — say so plainly and stop.** Do not try to invoke the tool names as shell commands, and do not silently install or launch the server yourself. Tell the user the skill needs the `scholar-sidekick-mcp` MCP server connected (no API key required), and let them wire it up. (If you have no way to connect an MCP server, use the zero-install `scholar-sidekick-api` skill, which calls the same service over plain `curl`.)
 
 ### Step 1: Pick the right tool
 
@@ -88,7 +86,7 @@ For `exportCitation`, the `format` parameter accepts: `bib` (BibTeX), `ris`, `cs
 - **Disambiguate Harvard and Chicago variants.** Both have multiple variants (`harvard-cite-them-right` vs other Harvard flavours; `chicago-author-date` vs `chicago-note-bibliography`). Ask the user which one they want when they say "Harvard" or "Chicago" without specifying.
 - **WHO IRIS is a real differentiator.** Most other citation tools cannot resolve WHO IRIS URLs. When the user shares a WHO publication, this skill is specifically the right tool.
 - **Batch single-tool calls, not loops.** Sending five identifiers as one comma-separated batch returns five citations in one response; sending them as five separate tool calls multiplies round-trips and can hit rate limits.
-- **Pin the version when reproducibility matters.** The MCP server's `RAPIDAPI_HOST` defaults to the current production endpoint, which produces deterministic output for the same input + cache state. The `x-scholar-cache` header in the metadata block makes cache-hit vs cache-miss visible.
+- **Pin the version when reproducibility matters.** The MCP server calls the current production endpoint, which produces deterministic output for the same input + cache state. The `x-scholar-cache` header in the metadata block makes cache-hit vs cache-miss visible.
 
 ## When NOT to Use This Skill
 

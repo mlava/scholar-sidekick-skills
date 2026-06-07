@@ -16,7 +16,7 @@ misses.
 | Skill | Path | Use when |
 |-------|------|----------|
 | **`scholar-sidekick-api`** | [`skills/scholar-sidekick-api`](skills/scholar-sidekick-api/SKILL.md) | **Zero-install.** The agent can run `curl`/HTTP. No API key, no setup — calls the public REST API directly. Start here. |
-| **`scholar-sidekick-mcp`** | [`skills/scholar-sidekick-mcp`](skills/scholar-sidekick-mcp/SKILL.md) | The host has the [`scholar-sidekick-mcp`](https://github.com/mlava/scholar-sidekick-mcp) MCP server connected (with a `RAPIDAPI_KEY`). Native tool calls instead of `curl`. |
+| **`scholar-sidekick-mcp`** | [`skills/scholar-sidekick-mcp`](skills/scholar-sidekick-mcp/SKILL.md) | The host has the [`scholar-sidekick-mcp`](https://github.com/mlava/scholar-sidekick-mcp) MCP server connected (works anonymously — no key required; optional `SCHOLAR_API_KEY`/`RAPIDAPI_KEY` raise limits). Native tool calls instead of `curl`. |
 
 Both expose the same capabilities; pick the one that matches how your agent is wired.
 

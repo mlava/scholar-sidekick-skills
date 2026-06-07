@@ -137,8 +137,9 @@ Use this for "is this citation real?", not a plain format/resolve.
 ## Optional: MCP server (power users)
 Scholar Sidekick is also an MCP server (tools: `resolveIdentifier`, `formatCitation`,
 `exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation`). That path
-requires installing the server and a RapidAPI key, so the REST calls above are the
-zero-setup default. See the companion `scholar-sidekick-mcp` skill, or:
+requires connecting the server in an MCP host, so the REST calls above are the
+zero-setup default. The MCP server works anonymously (no key required). See the
+companion `scholar-sidekick-mcp` skill, or:
 ```bash
-npx -y scholar-sidekick-mcp@latest   # needs RAPIDAPI_KEY in env
+npx -y scholar-sidekick-mcp@latest   # anonymous; optional SCHOLAR_API_KEY/RAPIDAPI_KEY raise limits
 ```
