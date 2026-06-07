@@ -1,0 +1,8 @@
+# Output of `npx skills add` — install artifacts, not source.
+# The source of truth for skills lives in skills/.
+.agents/
+skills-lock.json
+
+# Node / tooling
+node_modules/
+.DS_Store
