@@ -95,20 +95,35 @@ So the hexagon is gated by **Security** and **Impact (evals)**, not by polishing
 
 ---
 
-## Scholar-specific frontmatter caveat
+## Scholar-specific frontmatter caveat — RESOLVED: leave the warnings
 
-These skills put `version`, `author`, `license` at the **top level** of the
-frontmatter, plus `metadata.{tags,related_skills,openclaw}`. Tessl's validation:
+First publish (v0.1.0, 2026-06-17) review threw **3 warnings on every skill**
+(Overall still PASSED, 0 errors):
 
-- `license_field` — fine (known optional key).
-- `metadata_version` — checks for **`metadata.version`**, which is **absent** here
-  (version is top-level). May surface as a soft warning.
-- `frontmatter_unknown_keys` — may flag top-level `version` / `author`.
+- `⚠ metadata_version - 'metadata.version' is missing` (version is top-level here)
+- `⚠ metadata_field - 'metadata' should map string keys to string values`
+  (ours has `tags: []`, `related_skills: []`, `openclaw: {}` — arrays/objects)
+- `⚠ frontmatter_unknown_keys` (top-level `version` / `author`)
 
-None of these block publishing, but if `review` warns, the cheapest fix is to mirror
-agent-ready's shape: move `version` under `metadata:` (keep the top-level too if the
-skills.sh/openclaw tooling needs it). Decide based on the actual `review` output —
-don't pre-change it. (The `# prettier-ignore` YAML comment is harmless.)
+**Decision: leave them.** They don't block publishing, and "fixing" for Tessl means
+flattening/removing the `metadata.{tags,related_skills,openclaw}` block and top-level
+keys that **openclaw / skills.sh actually consume** — breaking the other channel for
+a cosmetic warning. Same cross-ecosystem tension as the bundle-file split. (Adding a
+harmless `metadata.version: "1.0.0"` string would clear only the first of the three;
+not worth it.) The `# prettier-ignore` YAML comment is harmless.
+
+## Outcome of the first publish (v0.1.0, 2026-06-17)
+
+- **Listing score 70** on all three. **Security: api `Passed` (green)**, cli + mcp
+  `Advisory`. No high-severity W007 (anonymous tool) — better than agent-ready,
+  exactly as forecast. cli/mcp Advisory = intrinsic W011/W012; accept it.
+- **Review Score 88%** (Description 100%, Content 77%) on all three — noise band.
+- **Lesson #2 confirmed live:** the cli skill ships a `REFERENCE.md`, yet its
+  Content stayed 77% / Progressive-Disclosure 2/3 with the judge saying it *"can't
+  confirm REFERENCE.md exists."* Tessl can't see bundle files — the split is a
+  skills.sh win and a Tessl no-op. Don't split for Tessl.
+- **70 ceiling** is gated by Security (intrinsic) + Impact (0 `evals/`). The only
+  lever to move it is adding eval scenarios; content polish won't.
 
 ---
 
