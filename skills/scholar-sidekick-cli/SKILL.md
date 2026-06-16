@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-cli
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier.
+description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks.
 version: 1.0.0
 author: Scholar Sidekick
 license: MIT
@@ -22,13 +22,7 @@ check (retraction / open-access / fabrication) by running the `scholar` command.
 thin wrapper over the public Scholar Sidekick REST API. **No API key required** for the free,
 rate-limited tier — and ergonomic subcommands mean you don't hand-build JSON request bodies.
 
-> Pick the skill that matches how your agent is wired — all three expose the same capabilities:
-> - **`scholar-sidekick-cli`** (this skill): you can run Node ≥20 and prefer typed subcommands,
->   batch input, streaming, and `> file` redirection over crafting `curl` payloads.
-> - **`scholar-sidekick-api`**: truly zero-install — the agent already speaks `curl`/HTTP and
->   wants the leanest dependency surface. Start there if you don't want a Node dependency.
-> - **`scholar-sidekick-mcp`**: the host has the Scholar Sidekick MCP server connected — native
->   tool calls, no shelling out.
+> Sibling skills, same capabilities: use **`scholar-sidekick-api`** if there's no Node runtime (plain `curl`), or **`scholar-sidekick-mcp`** if an MCP host is connected. This skill is the typed-CLI path for Node ≥20.
 
 ## When to Use
 - The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) and wants metadata, a formatted citation, or a bibliography file, **and** the environment has Node ≥20.
@@ -106,6 +100,13 @@ scholar verify --title "The title exactly as cited" --doi 10.1016/S0140-6736(26)
 Use this for "is this citation real?", not a plain `format`/`resolve`. Add `--fail-on-mismatch`
 to make `mismatch`/`not_found` exit non-zero for scripting/CI.
 
+**Error-recovery loop (verify).** Correctness matters here, so don't guess on failure:
+1. Run `scholar verify …`.
+2. Check the exit code. `0` → trust the printed verdict.
+3. On non-zero, re-run with `--json` and read the `verdict`/error field — distinguish a real
+   `mismatch`/`not_found` (report it as such) from a network/usage error (code `2`/`3`, retry or fix flags).
+4. Report exactly what the CLI returned. **Never** emit a `matched`/genuine verdict the tool did not produce.
+
 ## Output & parsing (for agents)
 - Default output is human-readable text. **Pass `--json` to any command** to get the raw API JSON — parse that, don't scrape the pretty text:
   ```bash
@@ -113,22 +114,14 @@ to make `mismatch`/`not_found` exit non-zero for scripting/CI.
   ```
 - A dim provenance footer (request id, cache status, style, version) goes to **stderr**, so it never pollutes piped stdout. Suppress it with `--quiet`. Colour auto-disables off-TTY / with `NO_COLOR` / `--no-color`.
 
-## Authentication & limits
-Works **anonymously** at the free, rate-limited tier — fine for normal agent use. To raise limits:
-- First-party key (recommended, free): create at https://scholar-sidekick.com/account, prefixed `ssk_`. Pass `--api-key` or set `SCHOLAR_API_KEY`. Sent as `Authorization: Bearer ssk_…`.
-- RapidAPI key (paid/managed tiers): `--rapidapi-key` or `RAPIDAPI_KEY` — routes through the RapidAPI gateway, which only exposes `format`, `export`, `verify`, `retraction`, `oa`, `health`. The canonical-only commands (`format-items`, `stream`, `styles`) should run anonymously or with a first-party key.
+## Authentication, limits & exit codes
+Works **anonymously** at the free, rate-limited tier — fine for normal agent use. Optional `ssk_`
+or RapidAPI keys raise limits. The CLI uses standard exit codes (`0` ok, `1` API error, `2`
+network/timeout, `3` usage error). Full detail — keys, `--base-url`/`--timeout`, and the exit-code
+table — is in [`REFERENCE.md`](REFERENCE.md).
 
-Other global flags / env: `--base-url` (`SCHOLAR_SIDEKICK_URL`, default `https://scholar-sidekick.com`), `--timeout` (`SCHOLAR_SIDEKICK_TIMEOUT_MS`, default `30000`).
-
-## Exit codes
-| Code | Meaning |
-|---|---|
-| `0` | Success |
-| `1` | API error (4xx/5xx), or `verify --fail-on-mismatch` and verdict was `mismatch`/`not_found` |
-| `2` | Network failure or timeout |
-| `3` | Usage error (bad flags or invalid input) |
-
-Check the exit code; on non-zero, report the failure — **never invent** a citation, retraction status, OA verdict, or a `matched` verdict.
+Always check the exit code; on non-zero, report the failure — **never invent** a citation,
+retraction status, OA verdict, or a `matched` verdict.
 
 ## Pitfalls
 - Needs Node ≥20. If unavailable, use the `scholar-sidekick-api` skill (plain `curl`) instead.

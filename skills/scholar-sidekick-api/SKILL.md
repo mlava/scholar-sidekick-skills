@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-api
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier.
+description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, or check whether a paper is retracted, open-access, or a fabricated citation.
 version: 1.0.0
 author: Scholar Sidekick
 license: MIT
