@@ -1,8 +1,8 @@
 ---
 name: scholar-sidekick-mcp
 # prettier-ignore
-description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, or verification that a claimed citation is real (not fabricated). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
-version: 1.0.1
+description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
+version: 1.0.2
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -27,12 +27,13 @@ Activate this skill when the user:
 - Asks whether a paper has been retracted, corrected, or had an expression of concern raised
 - Asks whether a paper is open access, where to read it for free legally, or about its OA status / license
 - Pastes a citation (or a DOI + title) and asks whether it is real, genuine, or fabricated — "is this citation real?", "verify this DOI", "did you make this up?"
+- Pastes a whole reference list or a `.bib` / `.ris` / CSL-JSON file and wants every entry checked at once — "audit my bibliography", "which of these references are fake or retracted?"
 
 ## How to Use
 
 ### Step 0: Confirm the tools are available
 
-The capabilities this skill uses — `resolveIdentifier`, `formatCitation`, `exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation` — are **tools provided by the `scholar-sidekick-mcp` MCP server**. They are not shell commands, npm scripts, or a CLI. Do not try to run the tool names in a terminal.
+The capabilities this skill uses — `resolveIdentifier`, `formatCitation`, `exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation`, `auditBibliography` — are **tools provided by the `scholar-sidekick-mcp` MCP server**. They are not shell commands, npm scripts, or a CLI. Do not try to run the tool names in a terminal.
 
 The MCP server must be connected for these tools to work:
 
@@ -49,6 +50,7 @@ The MCP server must be connected for these tools to work:
 - **`checkRetraction`** — when the user asks whether a paper has been retracted, corrected, or flagged with an expression of concern (Crossref / Retraction Watch). Single identifier per call
 - **`checkOpenAccess`** — when the user asks whether a paper is open access or wants the best legal URL, license, and version (Unpaywall). Single identifier per call
 - **`verifyCitation`** — when the user pastes a citation and asks whether it is real or fabricated ("is this real?", "verify this DOI"). Cross-checks the *claimed* title (plus optional author/year/journal) against the record that actually resolves at the identifier. Use this — **not `resolveIdentifier`** — for "is this real?": the dominant AI fabrication pattern (Topaz et al., Lancet 2026) is a real, resolvable identifier paired with an invented title, which `resolveIdentifier` alone never catches. Single citation per call
+- **`auditBibliography`** — when the input is a **whole bibliography** rather than a single citation: raw BibTeX / RIS / CSL-JSON text (format auto-detected), or a `claims[]` array of pre-parsed `{title + identifier}` objects. Runs the `verifyCitation` fabrication check plus a retraction lookup on every entry (max 25 per call) and returns a per-entry verdict table plus a corpus summary (`total / matched / mismatch / ambiguous / not_found / errored / retracted`). One failing entry becomes `status: "error"` without failing the batch. This audits citation *identity* — it does **not** check whether a source supports the claim it is cited for
 
 For end-to-end "raw IDs → exportable bibliography" workflows, chain `resolveIdentifier` → `formatCitation` → `exportCitation` in a single response — the tools compose. Example: "resolve these three IDs, format each in AMA, then export the set as BibTeX" exercises all three tools in one prompt.
 
@@ -65,6 +67,8 @@ The server tolerates DOI URLs (`https://doi.org/...`), `PMID:` / `PMC` prefixes,
 `checkRetraction` and `checkOpenAccess` take one identifier per call (parameter is `id`, not `text`). For multiple papers, loop one call per identifier.
 
 `verifyCitation` also takes one citation per call, with its own shape: a required `title` plus exactly one identifier (`doi`, `pmid`, `pmcid`, `arxiv`, `isbn`, `issn`, `ads`, or `whoIrisUrl`), and optional `author`, `year`, and `container` to sharpen the verdict.
+
+To verify many citations at once, don't loop `verifyCitation` — use `auditBibliography` with the raw bibliography text (or a `claims[]` array) and get every verdict plus a corpus summary in one call.
 
 ### Step 4: Pick the style or format
 

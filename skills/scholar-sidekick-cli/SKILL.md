@@ -1,8 +1,8 @@
 ---
 name: scholar-sidekick-cli
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks.
-version: 1.0.0
+description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks, or a whole-bibliography audit of a .bib/.ris/CSL-JSON file.
+version: 1.0.1
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -28,6 +28,7 @@ rate-limited tier — and ergonomic subcommands mean you don't hand-build JSON r
 - The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) and wants metadata, a formatted citation, or a bibliography file, **and** the environment has Node ≥20.
 - "Cite this in APA/Vancouver/Chicago…", "give me a BibTeX/RIS file", "export these refs to a file".
 - "Has this been retracted?", "is this open access?", "is this citation real / did you make it up?"
+- "Audit my bibliography" / "check all the references in this .bib file" — a whole reference list at once.
 - Batch jobs: several identifiers at once, or streaming results as they resolve.
 - Do NOT use to *search* for papers by topic — that's discovery (see the `arxiv` skill). This assumes you already have an identifier.
 - Prefer `scholar-sidekick-api` instead when there is no Node runtime, or `scholar-sidekick-mcp` when an MCP host is connected.
@@ -55,14 +56,16 @@ The examples below use `scholar`; substitute `npx -y scholar-sidekick-cli` if yo
 | `format-items` | Format pre-resolved items from `--file <json>` or stdin (a JSON array). | — |
 | `stream <ids...>` | Format a batch, streaming each result as NDJSON as it resolves. | yes |
 | `verify` | Verify a claimed citation against the record at its identifier. `--title` (required) + an identifier flag (`--doi`, `--pmid`, …). | no |
+| `audit [file]` | Audit a whole bibliography (BibTeX/RIS/CSL-JSON file, or stdin): per-entry fabrication check + retraction status, plus a corpus summary. `--format`, `--no-retraction`, `--fail-on-issues`. Max 25 entries. | file |
 | `retraction <id>` | Retraction / correction / expression-of-concern status (Crossref / Retraction Watch). Alias context: single id. | no |
 | `oa <id>` | Open-access status and best legal copy (Unpaywall). Alias: `open-access`. | no |
 | `styles [query]` | List/search available CSL citation styles (paginated). | — |
 | `health` | Service liveness and diagnostics. | — |
 
 `format`, `resolve`, `export`, and `stream` accept multiple identifiers (space-, comma-, or
-newline-separated). `verify`, `retraction`, and `oa` take a single identifier. Run
-`scholar <command> --help` for the full option list.
+newline-separated). `verify`, `retraction`, and `oa` take a single identifier; `audit` takes a
+bibliography file (or stdin) rather than identifiers. Run `scholar <command> --help` for the
+full option list.
 
 ## Procedure
 
@@ -100,6 +103,21 @@ scholar verify --title "The title exactly as cited" --doi 10.1016/S0140-6736(26)
 Use this for "is this citation real?", not a plain `format`/`resolve`. Add `--fail-on-mismatch`
 to make `mismatch`/`not_found` exit non-zero for scripting/CI.
 
+### Audit a whole bibliography (batch fabrication + retraction check)
+```bash
+scholar audit refs.bib                       # BibTeX/RIS/CSL-JSON, format auto-detected
+cat refs.ris | scholar audit                 # or pipe via stdin
+scholar audit refs.bib --json | jq '.summary'
+```
+The batch counterpart to `verify`: every entry gets the fabrication check plus a retraction
+lookup, and the command prints a per-entry verdict table and a corpus summary
+(`total / matched / mismatch / ambiguous / not_found / errored / retracted`). Flags:
+`--format bibtex|ris|csl-json` overrides auto-detection, `--no-retraction` skips the
+retraction lookup, `--fail-on-issues` exits non-zero when any entry is `mismatch`,
+`not_found`, or retracted (for scripting/CI). Max 25 entries per call; one bad entry becomes
+`status: "error"` without failing the batch. This audits citation *identity* — it does not
+check whether each source supports the claim it is cited for.
+
 **Error-recovery loop (verify).** Correctness matters here, so don't guess on failure:
 1. Run `scholar verify …`.
 2. Check the exit code. `0` → trust the printed verdict.
@@ -127,7 +145,7 @@ retraction status, OA verdict, or a `matched` verdict.
 - Needs Node ≥20. If unavailable, use the `scholar-sidekick-api` skill (plain `curl`) instead.
 - Pass identifiers verbatim; don't strip prefixes.
 - `--json` is what you parse; the default text and the stderr footer are for humans.
-- `verify`/`retraction`/`oa` are single-identifier; only `format`/`resolve`/`export`/`stream` batch.
+- `verify`/`retraction`/`oa` are single-identifier; only `format`/`resolve`/`export`/`stream` batch. To check a whole reference list in one call, use `audit` with a file (not identifiers).
 - Under a RapidAPI key, `format-items`/`stream`/`styles` aren't available — run those anonymously or with an `ssk_` key.
 
 ## Verification

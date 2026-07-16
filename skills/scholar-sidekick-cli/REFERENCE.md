@@ -10,7 +10,7 @@ Works **anonymously** at the free, rate-limited tier — fine for normal agent u
 - **First-party key (recommended, free):** create at https://scholar-sidekick.com/account,
   prefixed `ssk_`. Pass `--api-key` or set `SCHOLAR_API_KEY`. Sent as `Authorization: Bearer ssk_…`.
 - **RapidAPI key (paid/managed tiers):** `--rapidapi-key` or `RAPIDAPI_KEY` — routes through the
-  RapidAPI gateway, which only exposes `format`, `export`, `verify`, `retraction`, `oa`, `health`.
+  RapidAPI gateway, which only exposes `format`, `export`, `verify`, `audit`, `retraction`, `oa`, `health`.
   The canonical-only commands (`format-items`, `stream`, `styles`) should run anonymously or with
   a first-party key.
 
@@ -28,7 +28,7 @@ Works **anonymously** at the free, rate-limited tier — fine for normal agent u
 | Code | Meaning |
 |---|---|
 | `0` | Success |
-| `1` | API error (4xx/5xx), or `verify --fail-on-mismatch` and verdict was `mismatch`/`not_found` |
+| `1` | API error (4xx/5xx), `verify --fail-on-mismatch` and verdict was `mismatch`/`not_found`, or `audit --fail-on-issues` and the corpus had a mismatch, not-found, or retracted entry |
 | `2` | Network failure or timeout |
 | `3` | Usage error (bad flags or invalid input) |
 

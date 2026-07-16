@@ -1,8 +1,8 @@
 ---
 name: scholar-sidekick-api
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, or check whether a paper is retracted, open-access, or a fabricated citation.
-version: 1.0.0
+description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — for one citation or a whole bibliography at once. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, check whether a paper is retracted, open-access, or a fabricated citation, or audit every reference in a .bib/.ris/CSL-JSON bibliography.
+version: 1.0.1
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -30,6 +30,7 @@ free first-party key (`ssk_…`, from /account) or RapidAPI key only raises rate
 - The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) and wants metadata, a formatted citation, or a bibliography file.
 - "Cite this in APA/Vancouver/Chicago…", "give me a BibTeX/RIS file", "export these refs".
 - "Has this been retracted?", "is this open access?", "is this citation real / did you make it up?"
+- "Audit my bibliography", "check all these references at once", "which of these are fake or retracted?" — a whole reference list or `.bib` / `.ris` / CSL-JSON file.
 - Do NOT use to *search* for papers by topic — that's discovery (see the `arxiv` skill). This assumes you already have an identifier.
 
 ## Surfaces — call the API, never scrape the UI
@@ -61,6 +62,7 @@ Base URL: `https://scholar-sidekick.com`
 | Retraction / correction / EoC check | `POST /api/retraction-check` | `{id}` |
 | Open-access status + best legal URL | `POST /api/oa-check` | `{id}` |
 | Verify a claimed citation (fabrication) | `POST /api/verify` | `{claimed: {title, doi}}` |
+| Audit a whole bibliography (batch verify + retraction) | `POST /api/audit` | `{bibliography: "…"}` or `{claims: […]}` |
 | Service health | `GET /api/health` | — |
 
 ## Procedure
@@ -123,10 +125,29 @@ Citation fields go inside a **`claimed`** object: `title` (required) plus an ide
 
 Use this for "is this citation real?", not a plain format/resolve.
 
+### Audit a whole bibliography (batch fabrication + retraction check)
+```bash
+curl -sS -X POST "https://scholar-sidekick.com/api/audit" \
+  -H "Content-Type: application/json" \
+  -d '{"bibliography":"@article{ligo, title={Observation of Gravitational Waves from a Binary Black Hole Merger}, doi={10.1103/PhysRevLett.116.061102}}\n@article{fab, title={A Completely Invented Title That Does Not Match The Paper}, doi={10.1016/j.neuroscience.2023.02.008}}"}'
+```
+The batch counterpart to `/api/verify`. Send EITHER `bibliography` (raw BibTeX / RIS /
+CSL-JSON text; format auto-detected, override with `format`) OR `claims` (an array of
+`{title + one identifier}` objects) — not both. Optional `options.checks` defaults to
+`["retraction"]`; pass `[]` to skip the retraction lookup. Max 25 entries per call
+(excess dropped and reported via `truncated`). Returns
+`{ ok, format, entries[], parseErrors[], truncated, summary }` — each entry carries the
+same `verdict` / `confidence` semantics as `/api/verify` plus a
+`retraction: { checked, doi, isRetracted, hasCorrections, hasConcern, notices }` block, and
+`summary = { total, matched, mismatch, ambiguous, not_found, errored, retracted }`.
+One bad entry becomes `status: "error"` without failing the batch (a total outage returns
+`502`). This audits citation *identity* — it does **not** check whether each source
+supports the claim it is cited for.
+
 ## Pitfalls
 - Never scrape the web UI — the JSON API is faster and stable.
 - Pass identifiers verbatim; don't strip prefixes.
-- Body fields differ per endpoint: `format`/`export` use `text`; `retraction-check`/`oa-check` use `id` (one identifier per call); `verify` wraps fields in `claimed`. Don't mix them up.
+- Body fields differ per endpoint: `format`/`export` use `text`; `retraction-check`/`oa-check` use `id` (one identifier per call); `verify` wraps fields in `claimed`; `audit` takes `bibliography` (raw text) or `claims` (array), never both. Don't mix them up.
 - ISBNs have no DOI, so retraction/OA return a "no DOI" result for books.
 - Don't fabricate a fallback: if a call fails or returns `ok:false`, report that — never invent a citation, retraction status, OA verdict, or a "matched" verdict.
 
@@ -136,7 +157,8 @@ Use this for "is this citation real?", not a plain format/resolve.
 
 ## Optional: MCP server (power users)
 Scholar Sidekick is also an MCP server (tools: `resolveIdentifier`, `formatCitation`,
-`exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation`). That path
+`exportCitation`, `checkRetraction`, `checkOpenAccess`, `verifyCitation`,
+`auditBibliography`). That path
 requires connecting the server in an MCP host, so the REST calls above are the
 zero-setup default. The MCP server works anonymously (no key required). See the
 companion `scholar-sidekick-mcp` skill, or:
