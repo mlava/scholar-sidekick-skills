@@ -18,8 +18,11 @@ misses.
 | **`scholar-sidekick-api`** | [`skills/scholar-sidekick-api`](skills/scholar-sidekick-api/SKILL.md) | **Zero-install.** The agent can run `curl`/HTTP. No API key, no setup — calls the public REST API directly. Start here. |
 | **`scholar-sidekick-cli`** | [`skills/scholar-sidekick-cli`](skills/scholar-sidekick-cli/SKILL.md) | The agent has **Node ≥20** and prefers typed subcommands (`scholar format …`), batch input, streaming, and `> file` redirection over hand-built `curl` payloads. Ships on npm as [`scholar-sidekick-cli`](https://www.npmjs.com/package/scholar-sidekick-cli). |
 | **`scholar-sidekick-mcp`** | [`skills/scholar-sidekick-mcp`](skills/scholar-sidekick-mcp/SKILL.md) | The host has the [`scholar-sidekick-mcp`](https://github.com/mlava/scholar-sidekick-mcp) MCP server connected (works anonymously — no key required; optional `SCHOLAR_API_KEY`/`RAPIDAPI_KEY` raise limits). Native tool calls instead of `curl`. |
+| **`scholar-sidekick-python`** | [`skills/scholar-sidekick-python`](skills/scholar-sidekick-python/SKILL.md) | The agent runs **Python ≥3.9** — a script, a notebook, or a data pipeline — and wants typed objects (and a pandas DataFrame) instead of parsed text. Ships on PyPI as [`scholar-sidekick`](https://pypi.org/project/scholar-sidekick/). Best path for a reference list longer than 25 entries: it chunks and paces automatically. |
 
-All three expose the same capabilities; pick the one that matches how your agent is wired.
+They expose the same API underneath; pick the one that matches how your agent is wired. The
+Python client covers format / export / verify / audit only — for a standalone retraction check,
+open-access check, or style search, use `scholar-sidekick-api` or `-cli`.
 
 ## Install
 
@@ -30,7 +33,7 @@ These skills follow the open `SKILL.md` convention, so they install in any compa
 # list what's in the repo
 npx -y skills@latest add mlava/scholar-sidekick-skills --list
 
-# add everything in the repo (all three skills)
+# add everything in the repo (all four skills)
 npx -y skills@latest add mlava/scholar-sidekick-skills
 ```
 
@@ -45,11 +48,15 @@ npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-c
 
 # MCP skill (host has the scholar-sidekick-mcp server connected)
 npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-mcp
+
+# Python skill (agent runs Python ≥3.9; uses the `scholar-sidekick` package)
+npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-python
 ```
 
 > Browse the rendered docs: [scholar-sidekick-api](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-api)
 > · [scholar-sidekick-cli](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-cli)
-> · [scholar-sidekick-mcp](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-mcp) on skills.sh.
+> · [scholar-sidekick-mcp](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-mcp)
+> · [scholar-sidekick-python](https://www.skills.sh/mlava/scholar-sidekick-skills/scholar-sidekick-python) on skills.sh.
 
 ## Quick taste (no install)
 
@@ -65,6 +72,7 @@ curl -sS -X POST "https://scholar-sidekick.com/api/format" \
 - **OpenAPI 3.1:** https://scholar-sidekick.com/openapi/openapi.yml
 - **Agent Skills discovery index:** https://scholar-sidekick.com/.well-known/agent-skills/index.json
 - **MCP server:** https://github.com/mlava/scholar-sidekick-mcp · `npx -y scholar-sidekick-mcp@latest`
+- **Python client:** https://github.com/mlava/scholar-sidekick-python · `pip install scholar-sidekick`
 - **Data sources & determinism:** https://scholar-sidekick.com/.well-known/sources.json
 - **Browse on skills.sh:** https://www.skills.sh/mlava/scholar-sidekick-skills
 

@@ -34,7 +34,10 @@ jobs:
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # skills@1.5.x requires Node >=22.20.0 — on 20 the CLI aborts at import
+          # with `node:util` has no export named 'styleText', so every refresh
+          # silently no-ops and skills.sh keeps serving the stale snapshot.
+          node-version: 22
 
       # Explicit per-skill `skills/<name>` paths are what reliably re-capture
       # each SKILL.md body (the bare skill name resolves against the repo root
@@ -48,3 +51,6 @@ jobs:
 
       - name: Refresh scholar-sidekick-mcp
         run: npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-mcp --yes
+
+      - name: Refresh scholar-sidekick-python
+        run: npx -y skills@latest add mlava/scholar-sidekick-skills/skills/scholar-sidekick-python --yes
