@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-cli
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks, or a whole-bibliography audit of a .bib/.ris/CSL-JSON file.
+description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks, or a whole-bibliography audit of a .bib/.ris/CSL-JSON file.
 version: 1.0.1
 author: Scholar Sidekick
 license: MIT
@@ -25,7 +25,7 @@ rate-limited tier — and ergonomic subcommands mean you don't hand-build JSON r
 > Sibling skills, same capabilities: use **`scholar-sidekick-api`** if there's no Node runtime (plain `curl`), or **`scholar-sidekick-mcp`** if an MCP host is connected. This skill is the typed-CLI path for Node ≥20.
 
 ## When to Use
-- The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) and wants metadata, a formatted citation, or a bibliography file, **and** the environment has Node ≥20.
+- The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL; shortDOI aliases like `10/aabbe` accepted) and wants metadata, a formatted citation, or a bibliography file, **and** the environment has Node ≥20.
 - "Cite this in APA/Vancouver/Chicago…", "give me a BibTeX/RIS file", "export these refs to a file".
 - "Has this been retracted?", "is this open access?", "is this citation real / did you make it up?"
 - "Audit my bibliography" / "check all the references in this .bib file" — a whole reference list at once.
@@ -75,7 +75,7 @@ scholar format 10.1038/nphys1170 --style vancouver
 scholar format 10.1038/nphys1170 PMID:30049270 --style apa   # batch
 ```
 - `--style`: `vancouver` (default), `ama`, `apa`, `ieee`, `cse`, or any CSL style ID (`chicago-author-date`, `harvard-cite-them-right`, `nature`, `the-lancet`, …). Use `scholar styles <query>` to discover IDs.
-- Pass identifiers verbatim — `PMID:`, `arXiv:`, ISBN hyphens, and `https://doi.org/…` are all tolerated.
+- Pass identifiers verbatim — `PMID:`, `arXiv:`, ISBN hyphens, and `https://doi.org/…` are all tolerated. A shortDOI alias (`10/aabbe`, from shortdoi.org) is accepted anywhere a DOI is, and expanded to the full DOI before resolving.
 
 ### Export a bibliography file
 ```bash

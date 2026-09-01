@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-python
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), verify a claimed citation against the record its identifier actually resolves to, and audit a reference list of any length for fabricated and retracted entries — from Python via the `scholar-sidekick` package. Wraps the public REST API; needs Python ≥3.9 but no API key for the free tier. Use when the agent runs Python (a script, a notebook, a data pipeline) and the user wants to cite, export, verify, or audit references by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL — especially a bibliography longer than 25 entries, which this client chunks and paces automatically.
+description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), verify a claimed citation against the record its identifier actually resolves to, and audit a reference list of any length for fabricated and retracted entries — from Python via the `scholar-sidekick` package. Wraps the public REST API; needs Python ≥3.9 but no API key for the free tier. Use when the agent runs Python (a script, a notebook, a data pipeline) and the user wants to cite, export, verify, or audit references by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL — especially a bibliography longer than 25 entries, which this client chunks and paces automatically.
 version: 1.0.0
 author: Scholar Sidekick
 license: MIT
@@ -28,7 +28,7 @@ objects, so you never parse text output.
 
 ## When to Use
 - The agent runs Python — a script, a notebook, or a data pipeline — and the user has an identifier
-  (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL).
+  (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL; shortDOI aliases like `10/aabbe` accepted).
 - "Is this citation real / did you make it up?" — `verify()` compares the claimed title against the
   record the identifier resolves to.
 - "Check every reference in this list" — **especially a list longer than 25 entries.**

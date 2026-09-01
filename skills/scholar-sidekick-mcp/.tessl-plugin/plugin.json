@@ -1,8 +1,8 @@
 {
   "name": "mlava/scholar-sidekick-mcp",
-  "description": "Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.",
+  "description": "Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.",
   "skills": [
     "."
   ],
-  "version": "0.1.2"
+  "version": "0.1.3"
 }

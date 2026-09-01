@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-mcp
 # prettier-ignore
-description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
+description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
 version: 1.0.2
 author: Scholar Sidekick
 license: MIT
@@ -58,7 +58,7 @@ For multi-paper retraction or open-access sweeps, call `checkRetraction` / `chec
 
 ### Step 2: Pass identifiers verbatim
 
-The server tolerates DOI URLs (`https://doi.org/...`), `PMID:` / `PMC` prefixes, `arXiv:` prefixes, ISBN hyphens, and WHO IRIS URLs. Do not strip prefixes or reformat — pass exactly what the user gave you.
+The server tolerates DOI URLs (`https://doi.org/...`), shortDOI aliases (`10/aabbe`, from shortdoi.org — expanded to the full DOI before resolving), `PMID:` / `PMC` prefixes, `arXiv:` prefixes, ISBN hyphens, and WHO IRIS URLs. Do not strip prefixes or reformat — pass exactly what the user gave you.
 
 ### Step 3: Batch when possible
 

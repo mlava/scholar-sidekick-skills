@@ -4,8 +4,7 @@ Portable [Agent Skills](https://agentskills.io) that teach AI agents to use
 **[Scholar Sidekick](https://scholar-sidekick.com)** - a fast, deterministic citation
 resolver, formatter, exporter, and **citation verifier**.
 
-Paste any scholarly identifier (DOI, PMID, PMCID, ISBN, ISSN, arXiv ID, ADS bibcode, or a
-WHO IRIS URL) and get a clean citation in 10,000+ CSL styles, a bibliography file
+Paste any scholarly identifier (DOI, PMID, PMCID, ISBN, ISSN, arXiv ID, ADS bibcode, or a WHO IRIS URL; shortDOI aliases like `10/aabbe` accepted) and get a clean citation in 10,000+ CSL styles, a bibliography file
 (BibTeX, RIS, EndNote, CSL-JSON, CSV...), a **retraction** check (Crossref + Retraction
 Watch), an **open-access** check (Unpaywall), or a **fabrication** check that catches the
 real-DOI-plus-invented-title pattern (Topaz et al., Lancet 2026) that plain DOI resolution

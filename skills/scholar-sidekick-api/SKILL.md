@@ -1,7 +1,7 @@
 ---
 name: scholar-sidekick-api
 # prettier-ignore
-description: Resolve scholarly identifiers (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — for one citation or a whole bibliography at once. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, check whether a paper is retracted, open-access, or a fabricated citation, or audit every reference in a .bib/.ris/CSL-JSON bibliography.
+description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — for one citation or a whole bibliography at once. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, check whether a paper is retracted, open-access, or a fabricated citation, or audit every reference in a .bib/.ris/CSL-JSON bibliography.
 version: 1.0.1
 author: Scholar Sidekick
 license: MIT
@@ -27,7 +27,7 @@ free first-party key (`ssk_…`, from /account) or RapidAPI key only raises rate
 > zero-setup path that works in any agent that can run `curl`.
 
 ## When to Use
-- The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) and wants metadata, a formatted citation, or a bibliography file.
+- The user has an identifier (DOI, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL; shortDOI aliases like `10/aabbe` accepted) and wants metadata, a formatted citation, or a bibliography file.
 - "Cite this in APA/Vancouver/Chicago…", "give me a BibTeX/RIS file", "export these refs".
 - "Has this been retracted?", "is this open access?", "is this citation real / did you make it up?"
 - "Audit my bibliography", "check all these references at once", "which of these are fake or retracted?" — a whole reference list or `.bib` / `.ris` / CSL-JSON file.
@@ -73,7 +73,7 @@ curl -sS -X POST "https://scholar-sidekick.com/api/format" \
   -H "Content-Type: application/json" \
   -d '{"text": "10.1038/nphys1170", "style": "vancouver", "output": "text"}'
 ```
-- `text`: one identifier, or several newline-separated for a batch. Pass verbatim — `PMID:`, `arXiv:`, ISBN hyphens, and `https://doi.org/…` are all tolerated.
+- `text`: one identifier, or several newline-separated for a batch. Pass verbatim — `PMID:`, `arXiv:`, ISBN hyphens, and `https://doi.org/…` are all tolerated. A shortDOI alias (`10/aabbe`, from shortdoi.org) is accepted anywhere a DOI is, and expanded to the full DOI before resolving.
 - `style`: `vancouver` (default), `ama`, `apa`, `ieee`, `cse`, or any CSL style ID (`chicago-author-date`, `harvard-cite-them-right`, `modern-language-association`, `nature`, `bmj`, `the-lancet`, …).
 - `output`: `text` or `json`.
 Response: `{ "ok": true, "items": [{ "formatted": "…" }], "text": "…" }`.
