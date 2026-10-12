@@ -2,7 +2,7 @@
 name: scholar-sidekick-api
 # prettier-ignore
 description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — for one citation or a whole bibliography at once. Calls a documented REST API over plain HTTP — no install, no API key needed for the free tier. Use when the user has a DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL and asks to format a citation, build or export a bibliography, check whether a paper is retracted, open-access, or a fabricated citation, or audit every reference in a .bib/.ris/CSL-JSON bibliography.
-version: 1.0.1
+version: 1.0.2
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -122,6 +122,13 @@ Citation fields go inside a **`claimed`** object: `title` (required) plus an ide
 - `ambiguous` — the identifier resolves to one paper but the claimed title matches a *different*
   real paper (a wrong-identifier error, not a fabrication).
 - `not_found` — neither identifier nor title resolves anywhere.
+
+Add `"options": {"semantic_title": true}` (any tier) to also judge whether the claimed and
+resolved titles describe the *same work*. String similarity misses a one-word swap in a long
+title ("cardiac" → "renal", "with" → "without"); this catches it and moves a flagged `matched`
+to `ambiguous` for review — never `mismatch`. It is opt-in because the judgment is not
+byte-deterministic (probabilities are in `_provenance.semantic_title`), so leave it off when the
+user needs a reproducible verdict. The same option works per entry on `/api/audit`.
 
 Use this for "is this citation real?", not a plain format/resolve.
 
