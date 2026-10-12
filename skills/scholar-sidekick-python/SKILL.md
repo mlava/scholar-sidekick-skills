@@ -2,7 +2,7 @@
 name: scholar-sidekick-python
 # prettier-ignore
 description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), verify a claimed citation against the record its identifier actually resolves to, and audit a reference list of any length for fabricated and retracted entries — from Python via the `scholar-sidekick` package. Wraps the public REST API; needs Python ≥3.9 but no API key for the free tier. Use when the agent runs Python (a script, a notebook, a data pipeline) and the user wants to cite, export, verify, or audit references by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL — especially a bibliography longer than 25 entries, which this client chunks and paces automatically.
-version: 1.0.0
+version: 1.0.1
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -80,7 +80,12 @@ print(result.verdict, result.confidence)
 ```
 
 `title` is required, plus at least one identifier keyword (`doi`, `pmid`, `pmcid`, `isbn`,
-`arxiv`, `issn`, `ads`, `who_iris_url`). Optional: `authors`, `year`, `container`.
+`arxiv`, `issn`, `ads`, `who_iris_url`). Optional: `authors`, `year`, `container`. Pass
+`semantic_title=True` (any tier) to also judge whether the cited and resolved titles describe
+the *same work* — catches a one-word swap in a long title that string similarity misses; a
+flagged match comes back `ambiguous` for review, never `mismatch`. Opt-in because the judgment
+is not byte-deterministic (see `result.provenance["semantic_title"]`); the same keyword works
+on `audit()` and `audit_bibliography()`.
 
 | verdict | meaning |
 |---|---|

@@ -2,7 +2,7 @@
 name: scholar-sidekick-cli
 # prettier-ignore
 description: Resolve scholarly identifiers (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, ADS bibcode, WHO IRIS URL) into formatted citations (10,000+ CSL styles) and bibliography exports (BibTeX, RIS, EndNote, CSV…), and check retraction, open-access, and citation-fabrication status — from the terminal via the `scholar` CLI. Wraps the public REST API; needs Node ≥20 but no API key for the free tier. Use when the user wants to look up, cite, export, or verify a reference by DOI, PMID, PMCID, ISBN, arXiv ID, ISSN, ADS bibcode, or WHO IRIS URL from the terminal — including retraction, open-access, and fabricated-citation checks, or a whole-bibliography audit of a .bib/.ris/CSL-JSON file.
-version: 1.0.1
+version: 1.0.2
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -95,7 +95,11 @@ One identifier per call. Books/ISBNs have no DOI, so these report a "no DOI" res
 ```bash
 scholar verify --title "The title exactly as cited" --doi 10.1016/S0140-6736(26)00603-3
 ```
-`--title` is required plus an identifier flag. Verdict ∈ `matched` / `mismatch` / `ambiguous` /
+`--title` is required plus an identifier flag. Add `--semantic-title` (any tier) to also judge
+whether the cited and resolved titles describe the *same work* — catches a one-word swap in a
+long title that string similarity misses; a flagged match becomes `ambiguous` for review, never
+`mismatch`. Opt-in because the judgment is not byte-deterministic; the same flag works on
+`audit`. Verdict ∈ `matched` / `mismatch` / `ambiguous` /
 `not_found`:
 - `mismatch` — identifier resolves but the title doesn't: the dominant AI-fabrication pattern (real DOI + invented title; Topaz et al., Lancet 2026).
 - `ambiguous` — identifier resolves to one paper but the claimed title matches a *different* real paper (wrong-identifier error, not fabrication).
