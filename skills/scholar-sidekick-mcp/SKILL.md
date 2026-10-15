@@ -2,7 +2,7 @@
 name: scholar-sidekick-mcp
 # prettier-ignore
 description: Use the connected scholar-sidekick-mcp MCP server when the user mentions a scholarly identifier (DOI including shortDOI aliases, PMID, PMCID, ISBN, arXiv, ISSN, NASA ADS bibcode, WHO IRIS URL) and wants structured metadata, a formatted citation, a bibliography export file, a retraction check, an open-access check, verification that a claimed citation is real (not fabricated), or a whole-bibliography audit (batch fabrication + retraction check). Requires the MCP server connected — it works anonymously, no API key required; for a zero-install path use the scholar-sidekick-api skill instead.
-version: 1.0.3
+version: 1.0.4
 author: Scholar Sidekick
 license: MIT
 metadata:
@@ -54,7 +54,7 @@ The MCP server must be connected for these tools to work:
 
 For end-to-end "raw IDs → exportable bibliography" workflows, chain `resolveIdentifier` → `formatCitation` → `exportCitation` in a single response — the tools compose. Example: "resolve these three IDs, format each in AMA, then export the set as BibTeX" exercises all three tools in one prompt.
 
-For multi-paper retraction or open-access sweeps, call `checkRetraction` / `checkOpenAccess` once per identifier — these tools accept exactly one `id` per call. Do not concatenate multiple identifiers; the server will reject batches.
+For a retraction sweep over a **whole reference list** — "check all these citations for retractions", the end of a literature review — call `auditBibliography` once: it runs the retraction lookup (plus the fabrication check) on every entry. For an open-access sweep, or a retraction check on just a few papers, call `checkOpenAccess` / `checkRetraction` once per identifier — these tools accept exactly one `id` per call. Do not concatenate multiple identifiers; the server will reject batches.
 
 ### Step 2: Pass identifiers verbatim
 
@@ -64,7 +64,7 @@ The server tolerates DOI URLs (`https://doi.org/...`), shortDOI aliases (`10/aab
 
 `resolveIdentifier`, `formatCitation`, and `exportCitation` accept a single identifier or a comma- or newline-separated batch in the `text` parameter. If the user provides multiple identifiers, send them in one call rather than looping.
 
-`checkRetraction` and `checkOpenAccess` take one identifier per call (parameter is `id`, not `text`). For multiple papers, loop one call per identifier.
+`checkRetraction` and `checkOpenAccess` take one identifier per call (parameter is `id`, not `text`). For a few papers, loop one call per identifier; for a whole reference list, use `auditBibliography` (retraction included).
 
 `verifyCitation` also takes one citation per call, with its own shape: a required `title` plus exactly one identifier (`doi`, `pmid`, `pmcid`, `arxiv`, `isbn`, `issn`, `ads`, or `whoIrisUrl`), and optional `author`, `year`, and `container` to sharpen the verdict. Set `semanticTitle: true` (any tier) to also judge whether the claimed and resolved titles describe the *same work* — it catches a one-word swap in a long title ("cardiac" → "renal", "with" → "without") that string similarity misses, and moves a flagged `matched` to `ambiguous` for review, never `mismatch`. It is opt-in because the judgment is not byte-deterministic (probabilities in `_provenance.semantic_title`), so leave it off when the user needs a reproducible verdict. The same option applies per entry on `auditBibliography`.
 
